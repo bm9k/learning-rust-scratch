@@ -209,7 +209,33 @@ fn _casting() {
     println!("{} + {} = {}", int_u8, int2_u8, int3_32);
 }
 
+fn _enums() {
+    enum Day {
+        Monday,
+        Tuesday,
+        Wednesday,
+        Thursday,
+        Friday,
+        Saturday,
+        Sunday,
+    }
 
+    // define functions on enum
+    impl Day {
+        fn is_weekend(&self) -> bool {
+            match self {
+                Day::Saturday | Day::Sunday => true,
+                _ => false,
+            }
+        }
+    }
+
+    let today: Day = Day::Thursday;
+    println!(
+        "Today is a weekend? {}",
+        if today.is_weekend() { "yes" } else { "no" }
+    )
+}
 
 fn main() {
     // _basic_ui();
@@ -220,6 +246,6 @@ fn main() {
     // _arrays();
     // _tuples();
     // _strings();
-    _casting();
-
+    // _casting();
+    _enums();
 }
