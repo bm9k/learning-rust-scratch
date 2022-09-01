@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use rand::Rng;
 use std::{cmp::Ordering, io};
 
@@ -206,6 +208,8 @@ fn _casting() {
 
     println!("{} + {} = {}", int_u8, int2_u8, int3_32);
 }
+
+
 
 fn main() {
     // _basic_ui();
