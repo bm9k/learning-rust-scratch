@@ -237,6 +237,15 @@ fn _enums() {
     )
 }
 
+fn _returnless_fn(a: i32, b: i32) -> i32 {
+    // no semi-colon
+    a + b
+}
+
+fn _return_tuple(x: i32) -> (i32, i32) {
+    return (x, x);
+}
+
 fn _vectors() {
     // can grow if mutable & can only contain values of the same type
     let vec1: Vec<i32> = Vec::new();
@@ -246,7 +255,7 @@ fn _vectors() {
     let second: &i32 = &vec2[1];
     match vec2.get(1) {
         Some(second) => println!("2nd: {}", second),
-        None => println!("No 2nd value")
+        None => println!("No 2nd value"),
     }
 
     for i in &mut vec2 {
@@ -260,6 +269,25 @@ fn _vectors() {
     println!("Pop: {:?}", vec2.pop());
 }
 
+fn sum(values: &[i32]) -> i32 {
+    let mut total: i32 = 0;
+
+    for value in values.iter() {
+        total += value;
+    }
+
+    total
+}
+
+fn _fns() {
+    println!("{}", _returnless_fn(4, 3));
+    let (a, b) = _return_tuple(3);
+    println!("{}, {}", a, b);
+
+    let nums = vec![1,2,3,4,5];
+    println!("Sum of nums: {}", sum(&nums));
+}
+
 fn main() {
     // _basic_ui();
     // _numerics();
@@ -271,5 +299,6 @@ fn main() {
     // _strings();
     // _casting();
     // _enums();
-    _vectors();
+    // _vectors();
+    _fns();
 }
