@@ -150,6 +150,55 @@ fn _tuples() {
     println!("v1: {}, v2: {}, v3: {}", v1, v2, v3);
 }
 
+fn _strings() {
+    // two types of strings
+
+    // String is mutable
+    // &str is a pointer to string
+
+    // variable length
+    let mut st1 = String::new();
+    st1.push('B');
+    st1.push_str("en");
+    st1.push_str(" test");
+    for word in st1.split_whitespace() {
+        println!("word: {}", word);
+    }
+
+    let st2 = st1.replace("e", "-3-");
+    println!("{}", st2);
+
+    // string of random characters
+    let st3 = String::from("d p q q m b n a");
+    let mut v1: Vec<char> = st3.chars().collect();
+    v1.sort();
+    v1.dedup();
+    for ch in v1 {
+        println!("char: {}", ch)
+    }
+
+    // dynamic heap string (String)
+    // fixed length utf-8 byte sequence (str), which needs to be accessed through pointer (&str)
+    // https://stackoverflow.com/a/24159933
+    let st4: &str = "Random string";
+    let mut st5: String = st4.to_string();
+    let byte_arr1 = st5.as_bytes();
+    // slice from 0 to 5 inclusive
+    let st6 = &st5[0..6];
+    println!("Length: {}", st6.len());
+    st5.clear();
+    println!("st5: {}", st5);
+    let st7 = String::from("Just some");
+    let st8 = String::from(" words in a string");
+    // st7 does not exist anymore
+    // st8 does exist, since it was referenced
+    let st9 = st7 + &st8;
+
+    for ch in st9.bytes() {
+        println!("ch: {}", ch);
+    }
+}
+
 fn main() {
     // _basic_ui();
     // _numerics();
@@ -157,5 +206,6 @@ fn main() {
     //_rand();
     //_conditional();
     // _arrays();
-    _tuples();
+    // _tuples();
+    _strings();
 }
