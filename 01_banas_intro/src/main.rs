@@ -1,4 +1,4 @@
-use std::io;
+use std::{io, cmp::Ordering};
 use rand::Rng;
 
 fn _basic_ui() {
@@ -76,6 +76,23 @@ fn _conditional() {
     // branch blocks can have multiple lines
     let label = if done {"Done"} else {"In-progress"};
     println!("{}", label);
+
+    let age2: u32 = 8;
+    match age2 {
+        1..=18 => println!("Important birthday"),
+        21 | 50 => println!("Other important birthday"),
+        65..=u32::MAX => println!("Another important birthday"),
+        _ => println!("Not important :(")
+    }
+
+    let my_age = 18;
+    let voting_age = 18;
+    match my_age.cmp(&voting_age) {
+        Ordering::Less => println!("Can't vote"),
+        Ordering::Greater => println!("Can vote"),
+        Ordering::Equal => println!("Recently gained the right to vote")
+    }
+
 }
 
 fn main() {
