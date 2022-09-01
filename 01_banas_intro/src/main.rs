@@ -101,13 +101,17 @@ fn _arrays() {
     println!("1st: {}", arr_1[0]);
     println!("Length: {}", arr_1.len());
 
-    let arr_2 = [3,1,4,1,5,9,2,6];
+    let arr_2 = [3, 1, 4, 1, 5, 9, 2, 6];
     let mut index = 0;
-    
+
     println!("Infinite loop");
     loop {
         let is_odd = arr_2[index] % 2 == 1;
-        println!("{} is {}", arr_2[index], if is_odd {"odd"} else {"even"});
+        println!(
+            "{} is {}",
+            arr_2[index],
+            if is_odd { "odd" } else { "even" }
+        );
         index += 1;
         if index == arr_2.len() {
             break;
@@ -118,17 +122,32 @@ fn _arrays() {
     index = 0;
     while index < arr_2.len() {
         let is_odd = arr_2[index] % 2 == 1;
-        println!("{} is {}", arr_2[index], if is_odd {"odd"} else {"even"});
+        println!(
+            "{} is {}",
+            arr_2[index],
+            if is_odd { "odd" } else { "even" }
+        );
         index += 1;
     }
 
     println!("For loop");
     for value in arr_2.iter() {
         let is_odd = value % 2 == 1;
-        println!("{} is {}", value, if is_odd {"odd"} else {"even"});
+        println!("{} is {}", value, if is_odd { "odd" } else { "even" });
     }
+}
 
+fn _tuples() {
+    // can be mutable, unlike python
+    let mut my_tuple: (u8, String, bool) = (31, "Ben".to_string(), true);
 
+    println!("Name: {}", my_tuple.1);
+
+    my_tuple.2 = false;
+
+    // tuple assignment/spread
+    let (v1, v2, v3) = my_tuple;
+    println!("v1: {}, v2: {}, v3: {}", v1, v2, v3);
 }
 
 fn main() {
@@ -137,5 +156,6 @@ fn main() {
     //_float_precision_and_arithmetic();
     //_rand();
     //_conditional();
-    _arrays();    
+    // _arrays();
+    _tuples();
 }
