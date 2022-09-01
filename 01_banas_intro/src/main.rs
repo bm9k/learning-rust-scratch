@@ -1,4 +1,5 @@
 use std::io;
+use rand::Rng;
 
 fn _basic_ui() {
     println!("What is your name?");
@@ -54,8 +55,14 @@ fn _float_precision_and_arithmetic() {
     println!("5 % 4 = {}", a % b);
 }
 
+fn _rand() {
+    let random_num = rand::thread_rng().gen_range(1..101);
+    println!("Random number between 1 & 100: {}", random_num)
+}
+
 fn main() {
     // _basic_ui();
     // _numerics();
-    _float_precision_and_arithmetic();
+    //_float_precision_and_arithmetic();
+    _rand();
 }
