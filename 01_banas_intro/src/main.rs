@@ -199,6 +199,14 @@ fn _strings() {
     }
 }
 
+fn _casting() {
+    let int_u8: u8 = 5;
+    let int2_u8: u8 = 4;
+    let int3_32: u32 = (int_u8 as u32) + (int2_u8 as u32);
+
+    println!("{} + {} = {}", int_u8, int2_u8, int3_32);
+}
+
 fn main() {
     // _basic_ui();
     // _numerics();
@@ -207,5 +215,7 @@ fn main() {
     //_conditional();
     // _arrays();
     // _tuples();
-    _strings();
+    // _strings();
+    _casting();
+
 }
