@@ -230,7 +230,7 @@ fn _enums() {
         }
     }
 
-    let today: Day = Day::Thursday;
+    let today = Day::Thursday;
     println!(
         "Today is a weekend? {}",
         if today.is_weekend() { "yes" } else { "no" }
@@ -269,7 +269,7 @@ fn _vectors() {
     println!("Pop: {:?}", vec2.pop());
 }
 
-fn sum(values: &[i32]) -> i32 {
+fn sum_i32(values: &[i32]) -> i32 {
     let mut total: i32 = 0;
 
     for value in values.iter() {
@@ -285,7 +285,53 @@ fn _fns() {
     println!("{}, {}", a, b);
 
     let nums = vec![1,2,3,4,5];
-    println!("Sum of nums: {}", sum(&nums));
+    println!("Sum of nums: {}", sum_i32(&nums));
+}
+
+use std::ops::Add;
+
+fn sum_ab<T:Add<Output = T>>(x: T, y: T) -> T {
+    return x + y;
+}
+
+// TODO: figure this out
+// fn sum<T:Add<Output = T>>(values: &[T]) -> T {
+//     let mut total: T = 0;
+
+//     for value: &T in values.iter() {
+//         total += value;
+//     }
+
+//     total;
+// }
+
+fn print_str(x: String) {
+    println!("A string: {}", x);
+}
+
+fn change_string(name: &mut String) {
+    name.push_str(" is big");
+}
+
+fn _ownership() {
+    // Heap: when putting data on the heap, you request a certain amount of space.
+    // The OS finds space available and returns a pointer
+
+    // Rules
+    // 1. Each value has a variable that's called its owner
+    // 2. There is only one owner at a time
+    // 3. Whenever the owner goes out of scope, the value disappears (deleted & memory freed)
+    
+    let str1 = String::from("World");
+    let str2 = str1;
+    // str1 is moved to str2, so the following gives an error
+    // println!("Hello {}", str1);
+    let mut str3 = str2.clone();
+    println!("hello {}", str2);
+    println!("hello {}", str3);
+
+    change_string(&mut str3);
+    println!("Changed string: {}", str3);
 }
 
 fn main() {
@@ -300,5 +346,6 @@ fn main() {
     // _casting();
     // _enums();
     // _vectors();
-    _fns();
+    // _fns();
+    _ownership();
 }
