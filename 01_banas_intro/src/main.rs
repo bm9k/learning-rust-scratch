@@ -60,9 +60,28 @@ fn _rand() {
     println!("Random number between 1 & 100: {}", random_num)
 }
 
+fn _conditional() {
+    let age = 8;
+    if (age >= 1) && (age <= 18) {
+        println!("Important birthday");
+    } else if (age == 21) || (age == 50) {
+        println!("Other important birthday");
+    } else if age >= 65 {
+        println!("Another important birthday");
+    } else {
+        println!("Not important :(")
+    }
+
+    let done = true;
+    // branch blocks can have multiple lines
+    let label = if done {"Done"} else {"In-progress"};
+    println!("{}", label);
+}
+
 fn main() {
     // _basic_ui();
     // _numerics();
     //_float_precision_and_arithmetic();
-    _rand();
+    //_rand();
+    _conditional();
 }
