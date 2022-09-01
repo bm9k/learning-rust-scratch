@@ -1,10 +1,12 @@
-use std::{io, cmp::Ordering};
 use rand::Rng;
+use std::{cmp::Ordering, io};
 
 fn _basic_ui() {
     println!("What is your name?");
     let mut name = String::new();
-    io::stdin().read_line(&mut name).expect("Did not receive input");
+    io::stdin()
+        .read_line(&mut name)
+        .expect("Did not receive input");
     println!("Hello, {}, nice to meet you!", name.trim_end());
 
     const ONE_MIL: u32 = 1_000_000;
@@ -74,7 +76,7 @@ fn _conditional() {
 
     let done = true;
     // branch blocks can have multiple lines
-    let label = if done {"Done"} else {"In-progress"};
+    let label = if done { "Done" } else { "In-progress" };
     println!("{}", label);
 
     let age2: u32 = 8;
@@ -82,7 +84,7 @@ fn _conditional() {
         1..=18 => println!("Important birthday"),
         21 | 50 => println!("Other important birthday"),
         65..=u32::MAX => println!("Another important birthday"),
-        _ => println!("Not important :(")
+        _ => println!("Not important :("),
     }
 
     let my_age = 18;
@@ -90,8 +92,42 @@ fn _conditional() {
     match my_age.cmp(&voting_age) {
         Ordering::Less => println!("Can't vote"),
         Ordering::Greater => println!("Can vote"),
-        Ordering::Equal => println!("Recently gained the right to vote")
+        Ordering::Equal => println!("Recently gained the right to vote"),
     }
+}
+
+fn _arrays() {
+    let arr_1 = [1, 2, 3, 4];
+    println!("1st: {}", arr_1[0]);
+    println!("Length: {}", arr_1.len());
+
+    let arr_2 = [3,1,4,1,5,9,2,6];
+    let mut index = 0;
+    
+    println!("Infinite loop");
+    loop {
+        let is_odd = arr_2[index] % 2 == 1;
+        println!("{} is {}", arr_2[index], if is_odd {"odd"} else {"even"});
+        index += 1;
+        if index == arr_2.len() {
+            break;
+        }
+    }
+
+    println!("While loop");
+    index = 0;
+    while index < arr_2.len() {
+        let is_odd = arr_2[index] % 2 == 1;
+        println!("{} is {}", arr_2[index], if is_odd {"odd"} else {"even"});
+        index += 1;
+    }
+
+    println!("For loop");
+    for value in arr_2.iter() {
+        let is_odd = value % 2 == 1;
+        println!("{} is {}", value, if is_odd {"odd"} else {"even"});
+    }
+
 
 }
 
@@ -100,5 +136,6 @@ fn main() {
     // _numerics();
     //_float_precision_and_arithmetic();
     //_rand();
-    _conditional();
+    //_conditional();
+    _arrays();    
 }
