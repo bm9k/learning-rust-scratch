@@ -3,7 +3,9 @@
 use rand::Rng;
 use std::collections::HashMap;
 use std::f32::consts::PI;
+use std::fs::File;
 use std::{cmp::Ordering, io};
+use std::io::{Write, BufReader, BufRead, ErrorKind};
 
 mod restaurant;
 use crate::restaurant::order_food;
@@ -430,8 +432,46 @@ fn _crates_modules_packages() {
 
 fn _error_handling() {
     // panic!("Terrible error");
-    let arr = [1,2];
+    let arr = [1, 2];
     // println!("element 10: {}", arr[10]);
+}
+
+fn _file_io_and_error_kinds() {
+    let path = "lines.txt";
+
+    let output = File::create(path);
+
+    // Result has 2 variants: Ok & Err
+    // enum Result<T, E> {
+    //     Ok(T),
+    //     Err(E),
+    // }
+    // where T represents the data type of the value returned & E represents the type of error
+
+    let mut output = match output {
+        Ok(file) => file,
+        Err(error) => panic!("Problem creating file: {:?}", error),
+    };
+    write!(output, "just some text\nseparated\nby\nnewlines").expect("Failed to write file");
+
+    let input = File::open(path).unwrap();
+    let buffered = BufReader::new(input);
+
+    for line in buffered.lines() {
+        println!("line: {}", line.unwrap());
+    }
+
+    let output2 = File::create("random.txt");
+    let output2 = match output2 {
+        Ok(file) => file,
+        Err(error) => match error.kind() {
+            ErrorKind::NotFound => match File::create("rand.txt") {
+                Ok(fc) => fc,
+                Err(e) => panic!("Can't create file {:?}", e),
+            }
+            _other_error => panic!("Problem opening file"),
+        }
+    };
 }
 
 fn main() {
@@ -451,5 +491,6 @@ fn main() {
     // _hash_maps();
     // _structs_and_traits();
     // _crates_modules_packages();
-    _error_handling();
+    // _error_handling();
+    _file_io_and_error_kinds();
 }
