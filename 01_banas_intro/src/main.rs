@@ -522,6 +522,49 @@ fn _closures() {
     println!("result: {}", c);
 }
 
+fn _smart_pointers() {
+    // smart pointers provide specific functionality beyond referencing a memory address
+    
+    // Box smart pointer stores data on the heap instead of the stack
+    // data on stack must have a defined fixed size
+    // Box normally used for large amount of data on heap with pointers to the data passed on the stack
+
+    let b_int1 = Box::new(10);
+    println!("b_int1 = {}", b_int1);
+
+    struct TreeNode<T> {
+        pub left: Option<Box<TreeNode<T>>>,
+        pub right: Option<Box<TreeNode<T>>>,
+        pub key: T,
+    }
+
+    impl<T> TreeNode<T> {
+        pub fn new(key: T) -> Self {
+            TreeNode { left: None, right: None, key }
+        }
+
+        pub fn left(mut self, node: TreeNode<T>) -> Self {
+            self.left = Some(Box::new(node));
+            self
+        }
+
+        pub fn right(mut self, node: TreeNode<T>) -> Self {
+            self.right = Some(Box::new(node));
+            self
+        }
+    }
+
+    let a = TreeNode::new(5);
+    let b = TreeNode::new(10);
+    let c = TreeNode::new(15);
+    let d = TreeNode::new(20);
+
+    a.left(b).right(c);
+    // why does this cause an error?
+    // https://users.rust-lang.org/t/move-occurs-because-value-has-type-x-which-does-not-implement-the-copy-trait/40895
+    // c.right(d);
+}
+
 fn main() {
     // _basic_ui();
     // _numerics();
@@ -542,5 +585,6 @@ fn main() {
     // _error_handling();
     // _file_io_and_error_kinds();
     // _iterators();
-    _closures();
+    // _closures();
+    _smart_pointers();
 }
