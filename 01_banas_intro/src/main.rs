@@ -1,10 +1,16 @@
 #![allow(unused)]
 
 use rand::Rng;
+use std::borrow::Borrow;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::f32::consts::PI;
 use std::fs::File;
 use std::io::{BufRead, BufReader, ErrorKind, Write};
+use std::rc::Rc;
+use std::sync::{Arc, Mutex};
+use std::thread;
+use std::time::Duration;
 use std::{cmp::Ordering, io};
 
 mod restaurant;
@@ -496,9 +502,7 @@ fn _closures() {
     //     BODY
     // }
 
-    let can_vote = |age: u32| -> bool {
-        age >= 18
-    };
+    let can_vote = |age: u32| -> bool { age >= 18 };
 
     println!("Can 65 vote? {}", can_vote(65));
     println!("Can 15 vote? {}", can_vote(15));
@@ -514,7 +518,9 @@ fn _closures() {
     println!("samp1 = {}", samp1);
 
     fn use_func<T>(a: i32, b: i32, func: T) -> i32
-    where T: Fn(i32, i32) -> i32 {
+    where
+        T: Fn(i32, i32) -> i32,
+    {
         func(a, b)
     }
 
@@ -524,7 +530,7 @@ fn _closures() {
 
 fn _smart_pointers() {
     // smart pointers provide specific functionality beyond referencing a memory address
-    
+
     // Box smart pointer stores data on the heap instead of the stack
     // data on stack must have a defined fixed size
     // Box normally used for large amount of data on heap with pointers to the data passed on the stack
@@ -540,7 +546,11 @@ fn _smart_pointers() {
 
     impl<T> TreeNode<T> {
         pub fn new(key: T) -> Self {
-            TreeNode { left: None, right: None, key }
+            TreeNode {
+                left: None,
+                right: None,
+                key,
+            }
         }
 
         pub fn left(mut self, node: TreeNode<T>) -> Self {
@@ -565,6 +575,90 @@ fn _smart_pointers() {
     // c.right(d);
 }
 
+fn _concurrency1() {
+    // Common problems
+    // 1. Threads access data in wrong order
+    // 2. Threads are blocked from executing because of confusion over requirements to proceed
+
+    let thread1 = thread::spawn(|| {
+        for i in 1..25 {
+            println!("spawned thread: {}", i);
+
+            thread::sleep(Duration::from_millis(1));
+        }
+    });
+
+    for i in 1..20 {
+        println!("main thread: {}", i);
+        thread::sleep(Duration::from_millis(1));
+    }
+
+    thread1.join().unwrap();
+}
+
+fn _concurrency2() {
+    // pub struct Bank {
+    //     balance: f32,
+    // }
+
+    // fn withdraw(bank: &mut Bank, amount: f32) {
+    //     bank.balance -= amount;
+    // }
+
+    // let mut bank = Bank{balance: 100.};
+
+    // withdraw(&mut bank, 5.);
+    // println!("Balance: {}", bank.balance);
+
+    // withdraw(&mut bank, 2.5);
+    // println!("Balance: {}", bank.balance);
+
+    // fn customer(bank: &mut Bank) {
+    //     withdraw(bank, 5.);
+    // }
+
+    // // closure cannot outlive current function
+    // // smart pointers allow multiple owners & block access when needed
+    // thread::spawn(|| {
+    //     customer(&mut bank);
+    // }).join().unwrap();
+
+    pub struct Bank {
+        balance: f32,
+    }
+
+    fn withdraw(bank: &Arc<Mutex<Bank>>, amount: f32) {
+        let mut bank_ref = bank.lock().unwrap();
+        if bank_ref.balance < amount {
+            println!("Can't withdraw {} from balance of {}", amount, bank_ref.balance);
+        } else {
+            bank_ref.balance -= amount;
+            println!("Withdrawal succeeded; {} remaining after {} withdrawn", bank_ref.balance, amount);
+        }
+    }
+
+    fn customer(bank: &Arc<Mutex<Bank>>) {
+        withdraw(&bank, 15.);
+    }
+
+    let bank: Arc<Mutex<Bank>> = Arc::new(Mutex::new(Bank{balance: 100.}));
+
+    let handles = (0..10).map(|_| {
+        let bank_ref = bank.clone();
+        thread::spawn(move || {
+            customer(&bank_ref);
+        })
+    });
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    println!("Total: {}", bank.lock().unwrap().balance);
+
+
+}
+
 fn main() {
     // _basic_ui();
     // _numerics();
@@ -586,5 +680,7 @@ fn main() {
     // _file_io_and_error_kinds();
     // _iterators();
     // _closures();
-    _smart_pointers();
+    // _smart_pointers();
+    // _concurrency1();
+    _concurrency2();
 }
