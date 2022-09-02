@@ -489,6 +489,39 @@ fn _iterators() {
     println!("1st: {:?}", iter1.next())
 }
 
+fn _closures() {
+    // closure = anonymous function
+
+    // let var_name = |parameters| -> return_type {
+    //     BODY
+    // }
+
+    let can_vote = |age: u32| -> bool {
+        age >= 18
+    };
+
+    println!("Can 65 vote? {}", can_vote(65));
+    println!("Can 15 vote? {}", can_vote(15));
+
+    // closures can access variables outside their body
+    let mut samp1 = 5;
+    let print_var = || println!("samp1 = {}", samp1);
+    print_var();
+
+    samp1 = 10;
+    let mut change_var = || samp1 += 1;
+    change_var();
+    println!("samp1 = {}", samp1);
+
+    fn use_func<T>(a: i32, b: i32, func: T) -> i32
+    where T: Fn(i32, i32) -> i32 {
+        func(a, b)
+    }
+
+    let c = use_func(5, 3, |a, b| a + b);
+    println!("result: {}", c);
+}
+
 fn main() {
     // _basic_ui();
     // _numerics();
@@ -508,5 +541,6 @@ fn main() {
     // _crates_modules_packages();
     // _error_handling();
     // _file_io_and_error_kinds();
-    _iterators();
+    // _iterators();
+    _closures();
 }
