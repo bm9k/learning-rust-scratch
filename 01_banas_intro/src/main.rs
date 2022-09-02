@@ -1,6 +1,7 @@
 #![allow(unused)]
 
 use rand::Rng;
+use std::collections::HashMap;
 use std::{cmp::Ordering, io};
 
 fn _basic_ui() {
@@ -334,6 +335,23 @@ fn _ownership() {
     println!("Changed string: {}", str3);
 }
 
+fn _hash_maps() {
+    let mut heroes = HashMap::new();
+    heroes.insert("Superman", "Clark Kent");
+    heroes.insert("Batman", "Bruce Wayne");
+    heroes.insert("The Flash", "Barry Allen");
+
+    for(k, v) in heroes.iter() {
+        println!("{}'s real identity is {}", k, v);
+    }
+
+    println!("{} heroes", heroes.len());
+
+    if heroes.contains_key("Iron Man") {
+        println!("no info for Iron Man");
+    }
+}
+
 fn main() {
     // _basic_ui();
     // _numerics();
@@ -347,5 +365,6 @@ fn main() {
     // _enums();
     // _vectors();
     // _fns();
-    _ownership();
+    // _ownership();
+    _hash_maps();
 }
