@@ -5,6 +5,9 @@ use std::collections::HashMap;
 use std::f32::consts::PI;
 use std::{cmp::Ordering, io};
 
+mod restaurant;
+use crate::restaurant::order_food;
+
 fn _basic_ui() {
     println!("What is your name?");
     let mut name = String::new();
@@ -415,6 +418,16 @@ fn _structs_and_traits() {
     println!("area of r1: {}", r1.area());
 }
 
+fn _crates_modules_packages() {
+    // Crates: modules that produce a library or executable
+    // Modules: organise and handle privacy
+    // Packages: build, test and share crates
+    //      - packages can contain 0 or 1 library crates & unlimited binary crates
+    // Paths: a way of naming an item such as a struct, function, etc.
+
+    order_food();
+}
+
 fn main() {
     // _basic_ui();
     // _numerics();
@@ -430,5 +443,6 @@ fn main() {
     // _fns();
     // _ownership();
     // _hash_maps();
-    _structs_and_traits();
+    // _structs_and_traits();
+    _crates_modules_packages();
 }
