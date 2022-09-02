@@ -4,8 +4,8 @@ use rand::Rng;
 use std::collections::HashMap;
 use std::f32::consts::PI;
 use std::fs::File;
+use std::io::{BufRead, BufReader, ErrorKind, Write};
 use std::{cmp::Ordering, io};
-use std::io::{Write, BufReader, BufRead, ErrorKind};
 
 mod restaurant;
 use crate::restaurant::order_food;
@@ -468,10 +468,25 @@ fn _file_io_and_error_kinds() {
             ErrorKind::NotFound => match File::create("rand.txt") {
                 Ok(fc) => fc,
                 Err(e) => panic!("Can't create file {:?}", e),
-            }
+            },
             _other_error => panic!("Problem opening file"),
-        }
+        },
     };
+}
+
+fn _iterators() {
+    let mut arr_it = [2, 7, 1, 8, 2, 8];
+
+    // .iter borrows values from collection
+    for value in arr_it.iter() {
+        println!("value: {}", value);
+    }
+
+    // consumes collection
+    // arr_it.into_iter()
+
+    let mut iter1 = arr_it.iter();
+    println!("1st: {:?}", iter1.next())
 }
 
 fn main() {
@@ -492,5 +507,6 @@ fn main() {
     // _structs_and_traits();
     // _crates_modules_packages();
     // _error_handling();
-    _file_io_and_error_kinds();
+    // _file_io_and_error_kinds();
+    _iterators();
 }
