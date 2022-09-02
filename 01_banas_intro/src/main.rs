@@ -2,6 +2,7 @@
 
 use rand::Rng;
 use std::collections::HashMap;
+use std::f32::consts::PI;
 use std::{cmp::Ordering, io};
 
 fn _basic_ui() {
@@ -285,13 +286,13 @@ fn _fns() {
     let (a, b) = _return_tuple(3);
     println!("{}, {}", a, b);
 
-    let nums = vec![1,2,3,4,5];
+    let nums = vec![1, 2, 3, 4, 5];
     println!("Sum of nums: {}", sum_i32(&nums));
 }
 
 use std::ops::Add;
 
-fn sum_ab<T:Add<Output = T>>(x: T, y: T) -> T {
+fn sum_ab<T: Add<Output = T>>(x: T, y: T) -> T {
     return x + y;
 }
 
@@ -322,7 +323,7 @@ fn _ownership() {
     // 1. Each value has a variable that's called its owner
     // 2. There is only one owner at a time
     // 3. Whenever the owner goes out of scope, the value disappears (deleted & memory freed)
-    
+
     let str1 = String::from("World");
     let str2 = str1;
     // str1 is moved to str2, so the following gives an error
@@ -341,7 +342,7 @@ fn _hash_maps() {
     heroes.insert("Batman", "Bruce Wayne");
     heroes.insert("The Flash", "Barry Allen");
 
-    for(k, v) in heroes.iter() {
+    for (k, v) in heroes.iter() {
         println!("{}'s real identity is {}", k, v);
     }
 
@@ -350,6 +351,68 @@ fn _hash_maps() {
     if heroes.contains_key("Iron Man") {
         println!("no info for Iron Man");
     }
+}
+
+fn _structs_and_traits() {
+    struct Customer {
+        name: String,
+        address: String,
+        balance: f32,
+    }
+
+    let mut bob = Customer {
+        name: String::from("Bob Smith"),
+        address: String::from("555 Main St"),
+        balance: 420.69,
+    };
+
+    bob.address = String::from("554 Main St");
+
+    // this example is a bit weird, but illustrates the point well
+    // struct Rectangle<T, U> {
+    //     length: T,
+    //     height: U,
+    // }
+    // let rect = Rectangle {
+    //     length: 4,
+    //     height: 10.5,
+    // };
+
+    trait Shape {
+        // constructor
+        // fn new(length: f32, width: f32) -> Self;
+        fn area(&self) -> f32;
+    }
+
+    struct Rectangle {
+        length: f32,
+        width: f32,
+    };
+
+    struct Circle {
+        radius: f32,
+    };
+
+    impl Shape for Rectangle {
+        fn area(&self) -> f32 {
+            return self.length * self.width;
+        }
+    }
+
+    impl Shape for Circle {
+        fn area(&self) -> f32 {
+            return self.radius * self.radius * PI;
+        }
+    }
+
+    let c1 = Circle { radius: 5. };
+    let r1 = Rectangle {
+        length: 4.,
+        width: 3.,
+    };
+
+    println!("area of c1: {}", c1.area());
+    println!("area of r1: {}", r1.area());
 }
 
 fn main() {
@@ -366,5 +429,6 @@ fn main() {
     // _vectors();
     // _fns();
     // _ownership();
-    _hash_maps();
+    // _hash_maps();
+    _structs_and_traits();
 }
