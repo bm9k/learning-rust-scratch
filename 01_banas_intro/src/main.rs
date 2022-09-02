@@ -428,6 +428,12 @@ fn _crates_modules_packages() {
     order_food();
 }
 
+fn _error_handling() {
+    // panic!("Terrible error");
+    let arr = [1,2];
+    // println!("element 10: {}", arr[10]);
+}
+
 fn main() {
     // _basic_ui();
     // _numerics();
@@ -444,5 +450,6 @@ fn main() {
     // _ownership();
     // _hash_maps();
     // _structs_and_traits();
-    _crates_modules_packages();
+    // _crates_modules_packages();
+    _error_handling();
 }
