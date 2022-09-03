@@ -20,29 +20,22 @@ fn handle_connection(mut stream: TcpStream) {
 
     let get = b"GET / HTTP/1.1\r\n";
 
-    // TODO: dedupe
-    if buffer.starts_with(get) {
-        let contents = fs::read_to_string("index.html").unwrap();
-
-        let response = format!(
-            "HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{}",
-            contents.len(),
-            contents
-        );
-
-        stream.write(response.as_bytes()).unwrap();
-        stream.flush().unwrap();
+    let (status_code, reason, body_file) = if buffer.starts_with(get) {
+        (200, "OK", "index.html")
     } else {
-        let contents = fs::read_to_string("404.html").unwrap();
+        (404, "NOT FOUND", "404.html")
+    };
 
-        let response = format!(
-            "HTTP/1.1 404 NOT FOUND\r\nContent-Length: {}\r\n\r\n{}",
-            contents.len(),
-            contents
-        );
+    let contents = fs::read_to_string(body_file).unwrap();
 
-        stream.write(response.as_bytes()).unwrap();
-        stream.flush().unwrap();
-        
-    }
+    let response = format!(
+        "HTTP/1.1 {} {}\r\nContent-Length: {}\r\n\r\n{}",
+        status_code,
+        reason,
+        contents.len(),
+        contents
+    );
+
+    stream.write(response.as_bytes()).unwrap();
+    stream.flush().unwrap();
 }
