@@ -1,6 +1,6 @@
 use std::fs;
-use std::net::{TcpListener, TcpStream};
 use std::io::prelude::*;
+use std::net::{TcpListener, TcpStream};
 
 fn main() {
     // for prod, should handle error, but for this example, unwrap will panic if error occurs
@@ -13,27 +13,36 @@ fn main() {
     }
 }
 
-fn handle_connection(mut stream:TcpStream) {
+fn handle_connection(mut stream: TcpStream) {
     // [x; n] array of length n, filled with x
     let mut buffer = [0; 1024];
-
     stream.read(&mut buffer).unwrap();
 
-    let contents = fs::read_to_string("index.html").unwrap();
+    let get = b"GET / HTTP/1.1\r\n";
 
-    // Response format:
-    // HTTP-Version Status-Code Reason-Phrase CRLF
-    // headers CRLF
-    // message-body
-    //
-    // e.g.: HTTP/1.1 200 OK\r\n\r\n
+    // TODO: dedupe
+    if buffer.starts_with(get) {
+        let contents = fs::read_to_string("index.html").unwrap();
 
-    let response = format!(
-        "HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{}",
-        contents.len(),
-        contents
-    );
-    println!("{}", response);
-    stream.write(response.as_bytes()).unwrap();
-    stream.flush().unwrap();
+        let response = format!(
+            "HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{}",
+            contents.len(),
+            contents
+        );
+
+        stream.write(response.as_bytes()).unwrap();
+        stream.flush().unwrap();
+    } else {
+        let contents = fs::read_to_string("404.html").unwrap();
+
+        let response = format!(
+            "HTTP/1.1 404 NOT FOUND\r\nContent-Length: {}\r\n\r\n{}",
+            contents.len(),
+            contents
+        );
+
+        stream.write(response.as_bytes()).unwrap();
+        stream.flush().unwrap();
+        
+    }
 }
