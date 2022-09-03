@@ -1,7 +1,20 @@
 use std::thread;
 
 pub struct ThreadPool {
-    threads: Vec<thread::JoinHandle<()>>,
+    workers: Vec<Worker>
+}
+
+struct Worker {
+    id: usize,
+    thread: thread::JoinHandle<()>,
+}
+
+impl Worker {
+    fn new(id: usize) -> Worker {
+        let thread = thread::spawn(|| {});
+
+        Worker { id, thread }
+    }
 }
 
 impl ThreadPool {
@@ -17,18 +30,20 @@ impl ThreadPool {
         // for prod code, should return Result
         assert!(size > 0);
 
-        let mut threads = Vec::with_capacity(size);
+        let mut workers = Vec::with_capacity(size);
 
-        for _ in 0..size {
-          // TODO: create threads
+        for id in 0..size {
+            // TODO: create threads
+            workers.push(Worker::new(id));
         }
 
-        ThreadPool {threads}
+        ThreadPool { workers }
     }
 
     pub fn execute<F>(&self, f: F)
     where
         F: FnOnce() + Send + 'static,
     {
+
     }
 }
