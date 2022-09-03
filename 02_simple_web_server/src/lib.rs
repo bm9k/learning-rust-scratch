@@ -2,33 +2,65 @@ use std::{thread, sync::{mpsc, Mutex, Arc}};
 
 pub struct ThreadPool {
     workers: Vec<Worker>,
-    sender: mpsc::Sender<Job>
+    sender: mpsc::Sender<ThreadMessage>
+}
+
+impl Drop for ThreadPool {
+    fn drop(&mut self) {
+        println!("Sending terminate message to all workers");
+
+        for _ in &self.workers {
+            self.sender.send(ThreadMessage::Terminate).unwrap();
+        }
+
+        println!("Waiting for all workers to finish");
+
+        for worker in &mut self.workers {
+            println!("Shutting down worker {}", worker.id);
+
+            if let Some(thread) = worker.thread.take() {
+                thread.join().unwrap();
+            }
+        }
+    }
 }
 
 struct Worker {
     id: usize,
-    thread: thread::JoinHandle<()>,
+    thread: Option<thread::JoinHandle<()>>,
 }
 
 impl Worker {
-    fn new(id: usize, receiver: Arc<Mutex<mpsc::Receiver<Job>>>) -> Worker {
+    fn new(id: usize, receiver: Arc<Mutex<mpsc::Receiver<ThreadMessage>>>) -> Worker {
         let thread = thread::spawn(move || loop {
-            let job = receiver
+            let message = receiver
                 .lock()
                 .unwrap()
                 .recv()
                 .unwrap();
 
-            println!("Worker {} got a job; executing.", id);
-            
-            job();
+            match message {
+                ThreadMessage::NewJob(job) => {
+                    println!("Worker {} got a job; executing.", id);
+                    job();
+                },
+                ThreadMessage::Terminate => {
+                    println!("Worker {} terminating.", id);
+                    break;
+                },
+            }
         });
 
-        Worker { id, thread }
+        Worker { id, thread: Some(thread) }
     }
 }
 
 type Job = Box<dyn FnOnce() + Send + 'static>;
+
+enum ThreadMessage {
+    NewJob(Job),
+    Terminate
+}
 
 impl ThreadPool {
     /// Create a new ThreadPool
@@ -50,7 +82,6 @@ impl ThreadPool {
         let mut workers = Vec::with_capacity(size);
 
         for id in 0..size {
-            // TODO: create threads
             workers.push(Worker::new(id, Arc::clone(& receiver)));
         }
 
@@ -62,6 +93,6 @@ impl ThreadPool {
         F: FnOnce() + Send + 'static,
     {
         let job = Box::new(f);
-        self.sender.send(job).unwrap();
+        self.sender.send(ThreadMessage::NewJob(job)).unwrap();
     }
 }
