@@ -1,4 +1,5 @@
-use std::net::TcpListener;
+use std::net::{TcpListener, TcpStream};
+use std::io::prelude::*;
 
 fn main() {
     // for prod, should handle error, but for this example, unwrap will panic if error occurs
@@ -7,6 +8,14 @@ fn main() {
     for stream in listener.incoming() {
         let stream = stream.unwrap();
 
-        println!("Connection established");
+        handle_connection(stream);
     }
+}
+
+fn handle_connection(mut stream:TcpStream) {
+    // [x; n] array of length n, filled with x
+    let mut buffer = [0; 1024];
+
+    stream.read(&mut buffer).unwrap();
+    println!("Request: {}", String::from_utf8_lossy(&buffer[..]));
 }
