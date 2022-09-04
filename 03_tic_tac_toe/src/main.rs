@@ -63,23 +63,25 @@ impl Game {
                 "| {}{}\x1b[0m | {}{}\x1b[0m | {}{}\x1b[0m |",
                 match row[0] {
                     Cell::Taken(Player::X) => "\x1b[33m",
-                    _ => "\x1b[35m"
+                    _ => "\x1b[35m",
                 },
                 row[0].value(),
                 match row[1] {
                     Cell::Taken(Player::X) => "\x1b[33m",
-                    _ => "\x1b[35m"
+                    _ => "\x1b[35m",
                 },
                 row[1].value(),
                 match row[2] {
                     Cell::Taken(Player::X) => "\x1b[33m",
-                    _ => "\x1b[35m"
+                    _ => "\x1b[35m",
                 },
                 row[2].value()
             );
             println!("| {} | {} | {} |", i * 3 + 1, i * 3 + 2, i * 3 + 3);
             println!("+---+---+---+");
         }
+
+        println!("");
     }
 
     fn check_winner(&self) -> GameResult {
@@ -147,6 +149,19 @@ fn prompt_address_once() -> Result<(usize, usize), String> {
     Err("Must be num from 1-9".to_string())
 }
 
+fn prompt_play_again() -> bool {
+    print!("Would you like to play again? [Y/n]: ");
+    io::stdout().flush().unwrap();
+
+    let mut line = String::new();
+    io::stdin().read_line(&mut line).expect("Read failed");
+
+    let line = line.trim();
+
+    return !(line == "N" || line == "n");
+
+}
+
 fn prompt_address(game: &Game) -> (usize, usize) {
     loop {
         match prompt_address_once() {
@@ -166,23 +181,32 @@ fn prompt_address(game: &Game) -> (usize, usize) {
 }
 
 fn main() {
-    let mut game = Game::new();
-
     loop {
-        game.print_board();
-        println!("Player {}'s turn", game.active.value());
+        println!("\n🔥 🔥 🔥 🔥 🔥 🔥\n");
+        println!("🔥 \x1b[31mTic\x1b[0m-\x1b[32mTac\x1b[0m-\x1b[34mToe\x1b[0m 🔥");
+        println!("\n🔥 🔥 🔥 🔥 🔥 🔥");
+        let mut game = Game::new();
 
-        let (row, column) = prompt_address(&game);
-        game.take(row, column);
-        game.next_player();
+        loop {
+            game.print_board();
+            println!("Player {}'s turn", game.active.value());
 
-        match game.check_winner() {
-            GameResult::Incomplete => continue,
-            GameResult::Won(player) => {
-                game.print_board();
-                println!("Player {} wins!", player.value());
-                break;
+            let (row, column) = prompt_address(&game);
+            game.take(row, column);
+            game.next_player();
+
+            match game.check_winner() {
+                GameResult::Incomplete => continue,
+                GameResult::Won(player) => {
+                    game.print_board();
+                    println!("Player {} wins!", player.value());
+                    break;
+                }
             }
+        }
+
+        if !prompt_play_again() {
+            break;
         }
     }
 }
