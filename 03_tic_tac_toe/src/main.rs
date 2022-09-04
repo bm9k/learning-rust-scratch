@@ -1,15 +1,15 @@
+use std::io::{self, Write};
+
 // [value; length] syntax requires value implements Copy trait
 // https://stackoverflow.com/a/29437510
 // not sure if this is the best solution
-#[derive(Copy, Clone)]
-#[derive(PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 enum Player {
     X,
     O,
 }
 
-#[derive(Copy, Clone)]
-#[derive(PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 enum Cell {
     Empty,
     Taken(Player),
@@ -28,7 +28,7 @@ type Board = [[Cell; 3]; 3];
 
 enum GameResult {
     Won(Player),
-    Incomplete
+    Incomplete,
 }
 
 struct Game {
@@ -80,8 +80,9 @@ impl Game {
         }
 
         // diagonals
-        if (board[0][0] == board[1][1] && board[1][1] == board[2][2]) || 
-                (board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
+        if (board[0][0] == board[1][1] && board[1][1] == board[2][2])
+            || (board[0][2] == board[1][1] && board[1][1] == board[2][0])
+        {
             if let Cell::Taken(player) = board[1][1] {
                 return GameResult::Won(player);
             }
@@ -102,55 +103,59 @@ impl Game {
     }
 }
 
+fn address_to_row_column(address: usize) -> (usize, usize) {
+    return ((address - 1) / 3, (address - 1) % 3);
+}
+
+fn prompt_address_once() -> Result<(usize, usize), String> {
+    print!("Please choose a number from 1-9: ");
+    io::stdout().flush().unwrap();
+
+    let mut line = String::new();
+    io::stdin().read_line(&mut line).expect("Read failed");
+
+    if let Ok(num) = line.trim().to_string().parse::<usize>() {
+        if let 1..=9 = num {
+            return Ok(address_to_row_column(num));
+        }
+    }
+
+    Err("Must be num from 1-9".to_string())
+}
+
+fn prompt_address(game: &Game) -> (usize, usize) {
+    loop {
+        match prompt_address_once() {
+            Ok((row, column)) => match game.board[row][column] {
+                Cell::Empty => break (row, column),
+                Cell::Taken(_) => {
+                    println!("That cell is already taken\n");
+                    continue;
+                }
+            },
+            Err(_) => {
+                println!("Must enter a number from 1-9\n");
+                continue;
+            }
+        }
+    }
+}
+
 fn main() {
     let mut game = Game::new();
 
-    let move_coords = [
-        // diagonal
-        (1, 1),
-        (0, 0),
-        (2, 1),
-        (0, 1),
-        (0, 2),
-        (1, 0),
-        (2, 0),
-        (2, 2),
+    loop {
+        game.print_board();
+        println!("Player {}'s turn", game.active.value());
 
-        // row
-        // (0, 0),
-        // (2, 0),
-        // (0, 1),
-        // (2, 2),
-        // (0, 2),
-        // (2, 1),
-
-        // column
-        // (0, 0),
-        // (0, 2),
-        // (1, 0),
-        // (1, 2),
-        // (2, 0),
-        // (2, 2),
-    ];
-
-    game.print_board();
-
-    for coord in move_coords {
-        let (row, column) = coord;
-
-        // TODO: error checking
-        println!("Player {} takes {}, {}\n", game.active.value(), row, column);
+        let (row, column) = prompt_address(&game);
         game.take(row, column);
-
         game.next_player();
 
-        game.print_board();
-
-        let winner = game.check_winner();
-
-        match winner {
+        match game.check_winner() {
             GameResult::Incomplete => continue,
             GameResult::Won(player) => {
+                game.print_board();
                 println!("Player {} wins!", player.value());
                 break;
             }
