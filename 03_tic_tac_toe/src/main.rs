@@ -7,6 +7,12 @@ enum Player {
     O,
 }
 
+#[derive(Copy, Clone)]
+enum Cell {
+    Empty,
+    Taken(Player),
+}
+
 impl Player {
     fn value(&self) -> char {
         match self {
@@ -16,7 +22,7 @@ impl Player {
     }
 }
 
-type Board = [[Option<Player>; 3]; 3];
+type Board = [[Cell; 3]; 3];
 
 fn print_board(board: &Board) {
     let mut output = String::new();
@@ -24,12 +30,8 @@ fn print_board(board: &Board) {
     for row in board {
         for cell in row {
             output.push(match cell {
-                Some(player) => player.value(),
-                // not sure how to explicitly match enum values without nested match
-                // e.g.
-                // Player::X => 'X',
-                // Player::O => 'O',
-                None => '-',
+                Cell::Taken(player) => player.value(),
+                Cell::Empty => '-',
             })
         }
         output.push('\n');
@@ -48,10 +50,11 @@ fn check_winner(board: &Board) -> Option<Player> {
     // diagonals
 
     return Some(Player::X);
+    return None;//Some(Player::X);
 }
 
 fn main() {
-    let mut board: Board = [[None; 3]; 3];
+    let mut board: Board = [[Cell::Empty; 3]; 3];
 
     let mut player = Player::X;
 
@@ -74,7 +77,7 @@ fn main() {
         println!("Player {} takes {}, {}\n", player.value(), row, column);
 
         // mark board
-        board[row][column] = Some(player);
+        board[row][column] = Cell::Taken(player);
 
         // swap player
         player = match player {
