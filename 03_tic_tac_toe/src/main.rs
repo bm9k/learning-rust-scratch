@@ -64,11 +64,8 @@ impl Game {
         // rows
         for i in 0..3 {
             if (board[i][0] == board[i][1]) && (board[i][0] == board[i][2]) {
-                match board[i][0] {
-                    Cell::Empty => continue,
-                    Cell::Taken(player) => {
-                        return GameResult::Won(player);
-                    }
+                if let Cell::Taken(player) = board[i][0] {
+                    return GameResult::Won(player);
                 }
             }
         }
@@ -76,11 +73,8 @@ impl Game {
         // columns
         for i in 0..3 {
             if (board[0][i] == board[1][i]) && (board[0][i] == board[2][i]) {
-                match board[0][i] {
-                    Cell::Empty => continue,
-                    Cell::Taken(player) => {
-                        return GameResult::Won(player);
-                    }
+                if let Cell::Taken(player) = board[0][i] {
+                    return GameResult::Won(player);
                 }
             }
         }
@@ -88,11 +82,8 @@ impl Game {
         // diagonals
         if (board[0][0] == board[1][1] && board[1][1] == board[2][2]) || 
                 (board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
-            match board[1][1] {
-                Cell::Empty => {},
-                Cell::Taken(player) => {
-                    return GameResult::Won(player);
-                }
+            if let Cell::Taken(player) = board[1][1] {
+                return GameResult::Won(player);
             }
         }
 
