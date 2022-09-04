@@ -24,6 +24,15 @@ impl Player {
     }
 }
 
+impl Cell {
+    fn value(&self) -> char {
+        match self {
+            Cell::Empty => ' ',
+            Cell::Taken(player) => player.value(),
+        }
+    }
+}
+
 type Board = [[Cell; 3]; 3];
 
 enum GameResult {
@@ -39,23 +48,25 @@ struct Game {
 impl Game {
     fn new() -> Game {
         let board = [[Cell::Empty; 3]; 3];
-        Game{board, active: Player::X}
+        Game {
+            board,
+            active: Player::X,
+        }
     }
 
     fn print_board(&self) {
-        let mut output = String::new();
+        println!("+---+---+---+");
 
-        for row in self.board {
-            for cell in row {
-                output.push(match cell {
-                    Cell::Taken(player) => player.value(),
-                    Cell::Empty => '-',
-                })
-            }
-            output.push('\n');
+        for (i, row) in self.board.iter().enumerate() {
+            println!(
+                "| {} | {} | {} |",
+                row[0].value(),
+                row[1].value(),
+                row[2].value()
+            );
+            println!("| {} | {} | {} |", i * 3 + 1, i * 3 + 2, i * 3 + 3);
+            println!("+---+---+---+");
         }
-
-        println!("{}", output);
     }
 
     fn check_winner(&self) -> GameResult {
