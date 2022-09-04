@@ -24,39 +24,49 @@ impl Player {
 
 type Board = [[Cell; 3]; 3];
 
-fn print_board(board: &Board) {
-    let mut output = String::new();
-
-    for row in board {
-        for cell in row {
-            output.push(match cell {
-                Cell::Taken(player) => player.value(),
-                Cell::Empty => '-',
-            })
-        }
-        output.push('\n');
-    }
-
-    println!("{}", output);
+struct Game {
+    board: Board,
+    active: Player,
 }
 
-fn check_winner(board: &Board) -> Option<Player> {
-    // rows
+impl Game {
+    fn new() -> Game {
+        let board = [[Cell::Empty; 3]; 3];
+        Game{board, active: Player::X}
+    }
+
+    fn print_board(&self) {
+        let mut output = String::new();
+
+        for row in self.board {
+            for cell in row {
+                output.push(match cell {
+                    Cell::Taken(player) => player.value(),
+                    Cell::Empty => '-',
+                })
+            }
+            output.push('\n');
+        }
+
+        println!("{}", output);
+    }
+
+    fn check_winner(&self) -> Option<Player> {
+        // TODO: implement
+        // rows
 
 
-    // columns
+        // columns
 
 
-    // diagonals
+        // diagonals
 
-    return Some(Player::X);
-    return None;//Some(Player::X);
+        return Some(Player::X);
+    }
 }
 
 fn main() {
-    let mut board: Board = [[Cell::Empty; 3]; 3];
-
-    let mut player = Player::X;
+    let mut game = Game::new();
 
     let move_coords = [
         (1, 1),
@@ -69,25 +79,25 @@ fn main() {
         (2, 2),
     ];
 
-    print_board(&board);
+    game.print_board();
 
     for coord in move_coords {
         let (row, column) = coord;
 
-        println!("Player {} takes {}, {}\n", player.value(), row, column);
+        println!("Player {} takes {}, {}\n", game.active.value(), row, column);
 
         // mark board
-        board[row][column] = Cell::Taken(player);
+        game.board[row][column] = Cell::Taken(game.active);
 
         // swap player
-        player = match player {
+        game.active = match game.active {
             Player::X => Player::O,
             Player::O => Player::X,
         };
 
-        print_board(&board);
+        game.print_board();
 
-        let winner = check_winner(&board);
+        let winner = game.check_winner();
 
         match winner {
             None => continue,
