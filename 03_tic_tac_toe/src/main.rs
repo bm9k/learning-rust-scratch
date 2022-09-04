@@ -61,7 +61,19 @@ impl Game {
 
         // diagonals
 
+        // return None;
         return Some(Player::X);
+    }
+
+    fn take(&mut self, row: usize, column: usize) {
+        self.board[row][column] = Cell::Taken(self.active);
+    }
+
+    fn next_player(&mut self) {
+        self.active = match self.active {
+            Player::X => Player::O,
+            Player::O => Player::X,
+        };
     }
 }
 
@@ -84,16 +96,11 @@ fn main() {
     for coord in move_coords {
         let (row, column) = coord;
 
+        // TODO: error checking
         println!("Player {} takes {}, {}\n", game.active.value(), row, column);
+        game.take(row, column);
 
-        // mark board
-        game.board[row][column] = Cell::Taken(game.active);
-
-        // swap player
-        game.active = match game.active {
-            Player::X => Player::O,
-            Player::O => Player::X,
-        };
+        game.next_player();
 
         game.print_board();
 
