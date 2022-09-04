@@ -35,7 +35,19 @@ fn print_board(board: &Board) {
         output.push('\n');
     }
 
-    println!("Board:\n{}", output);
+    println!("{}", output);
+}
+
+fn check_winner(board: &Board) -> Option<Player> {
+    // rows
+
+
+    // columns
+
+
+    // diagonals
+
+    return Some(Player::X);
 }
 
 fn main() {
@@ -51,6 +63,7 @@ fn main() {
         (0, 2),
         (1, 0),
         (2, 0),
+        (2, 2),
     ];
 
     print_board(&board);
@@ -58,7 +71,7 @@ fn main() {
     for coord in move_coords {
         let (row, column) = coord;
 
-        println!("Player {} takes {}, {}", player.value(), row, column);
+        println!("Player {} takes {}, {}\n", player.value(), row, column);
 
         // mark board
         board[row][column] = Some(player);
@@ -70,5 +83,15 @@ fn main() {
         };
 
         print_board(&board);
+
+        let winner = check_winner(&board);
+
+        match winner {
+            None => continue,
+            Some(player) => {
+                println!("Player {} wins!", player.value());
+                break;
+            }
+        }
     }
 }
