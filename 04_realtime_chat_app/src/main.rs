@@ -1,3 +1,13 @@
-fn main() {
-    println!("Hello, world!");
+// imports rocket macros globally
+#[macro_use] extern crate rocket;
+
+#[get("/ping")]
+fn ping() -> &'static str {
+    "pong"
+}
+
+#[launch]
+fn rocket() -> _ {
+    rocket::build()
+        .mount("/", routes![ping])
 }
