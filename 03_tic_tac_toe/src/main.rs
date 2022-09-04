@@ -2,12 +2,14 @@
 // https://stackoverflow.com/a/29437510
 // not sure if this is the best solution
 #[derive(Copy, Clone)]
+#[derive(PartialEq, Eq)]
 enum Player {
     X,
     O,
 }
 
 #[derive(Copy, Clone)]
+#[derive(PartialEq, Eq)]
 enum Cell {
     Empty,
     Taken(Player),
@@ -23,6 +25,11 @@ impl Player {
 }
 
 type Board = [[Cell; 3]; 3];
+
+enum GameResult {
+    Won(Player),
+    Incomplete
+}
 
 struct Game {
     board: Board,
@@ -51,18 +58,45 @@ impl Game {
         println!("{}", output);
     }
 
-    fn check_winner(&self) -> Option<Player> {
-        // TODO: implement
+    fn check_winner(&self) -> GameResult {
+        // TODO: refactor/dedupe
+        let board = self.board;
         // rows
-
+        for i in 0..3 {
+            if (board[i][0] == board[i][1]) && (board[i][0] == board[i][2]) {
+                match board[i][0] {
+                    Cell::Empty => continue,
+                    Cell::Taken(player) => {
+                        return GameResult::Won(player);
+                    }
+                }
+            }
+        }
 
         // columns
-
+        for i in 0..3 {
+            if (board[0][i] == board[1][i]) && (board[0][i] == board[2][i]) {
+                match board[0][i] {
+                    Cell::Empty => continue,
+                    Cell::Taken(player) => {
+                        return GameResult::Won(player);
+                    }
+                }
+            }
+        }
 
         // diagonals
+        if (board[0][0] == board[1][1] && board[1][1] == board[2][2]) || 
+                (board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
+            match board[1][1] {
+                Cell::Empty => {},
+                Cell::Taken(player) => {
+                    return GameResult::Won(player);
+                }
+            }
+        }
 
-        // return None;
-        return Some(Player::X);
+        GameResult::Incomplete
     }
 
     fn take(&mut self, row: usize, column: usize) {
@@ -81,6 +115,7 @@ fn main() {
     let mut game = Game::new();
 
     let move_coords = [
+        // diagonal
         (1, 1),
         (0, 0),
         (2, 1),
@@ -89,6 +124,22 @@ fn main() {
         (1, 0),
         (2, 0),
         (2, 2),
+
+        // row
+        // (0, 0),
+        // (2, 0),
+        // (0, 1),
+        // (2, 2),
+        // (0, 2),
+        // (2, 1),
+
+        // column
+        // (0, 0),
+        // (0, 2),
+        // (1, 0),
+        // (1, 2),
+        // (2, 0),
+        // (2, 2),
     ];
 
     game.print_board();
@@ -107,8 +158,8 @@ fn main() {
         let winner = game.check_winner();
 
         match winner {
-            None => continue,
-            Some(player) => {
+            GameResult::Incomplete => continue,
+            GameResult::Won(player) => {
                 println!("Player {} wins!", player.value());
                 break;
             }
