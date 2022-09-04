@@ -55,13 +55,26 @@ impl Game {
     }
 
     fn print_board(&self) {
-        println!("+---+---+---+");
+        println!("\n+---+---+---+");
 
         for (i, row) in self.board.iter().enumerate() {
+            // TODO: dedupe
             println!(
-                "| {} | {} | {} |",
+                "| {}{}\x1b[0m | {}{}\x1b[0m | {}{}\x1b[0m |",
+                match row[0] {
+                    Cell::Taken(Player::X) => "\x1b[33m",
+                    _ => "\x1b[35m"
+                },
                 row[0].value(),
+                match row[1] {
+                    Cell::Taken(Player::X) => "\x1b[33m",
+                    _ => "\x1b[35m"
+                },
                 row[1].value(),
+                match row[2] {
+                    Cell::Taken(Player::X) => "\x1b[33m",
+                    _ => "\x1b[35m"
+                },
                 row[2].value()
             );
             println!("| {} | {} | {} |", i * 3 + 1, i * 3 + 2, i * 3 + 3);
